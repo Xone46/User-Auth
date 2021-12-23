@@ -1,40 +1,50 @@
 import React from 'react'
-import { Link } from "react-router-dom";
-import { useState } from 'react';
+import { Link , useNavigate } from "react-router-dom";
+import { useState , useEffect } from 'react';
 import axios from 'axios';
 
 
 
 
 
+
 export const Signup = () => {
-    const [name, setName] = useState('')
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+    const [token, setToken] = useState('');
+
+    useEffect(() => { 
+        setToken(sessionStorage.getItem('token')) 
+        if(token){
+            navigate('/dashboard')
+        }
+    });
+
 
     const handleSubmit = (e) => {
-        e.preventDefault() 
-        
-      console.log(name);
+        e.preventDefault()
+        axios.post('https://reqres.in/api/register', { email, password })
+            .then((res) => {
+                sessionStorage.setItem('token',res.data.token)
+                navigate('/');        
+            }).catch((err) => {
+                console.error(err)
+            })
     }
-
     return (
         <div>
             <div className='Navbar'>
                 <div className="sidenav">
                     <div className="login-main-text">
-                        <h2>Application<br /> Login Page</h2>
-                        <p>Login or register from here to access.</p>
+                        <h2>Application<br /> Register Page</h2>
+                        <p>register from here to access.</p>
                     </div>
                 </div>
                 <div className="main">
                     <div className="col-6">
                         <div className="login-form">
                             <form onSubmit={handleSubmit}>
-                                <div className="form-group">
-                                    <label>Name</label>
-                                    <input type="text" className="form-control" placeholder="Name" onChange={(e) => { setName(e.target.value) }} />
-                                </div>
                                 <div className="form-group">
                                     <label>E-mail</label>
                                     <input type="text" className="form-control" placeholder="Email" onChange={(e) => { setEmail(e.target.value) }} />
